@@ -1,0 +1,48 @@
+import streamlit as st
+from PIL import Image
+
+# Initialize chat history if it doesn't exist
+if 'chat_history' not in st.session_state:
+    st.session_state.chat_history = []
+
+def add_message(role, message):
+    st.session_state.chat_history.append({'role': role, 'message': message})
+
+def display_chat():
+    for chat in st.session_state.chat_history:
+        if chat['role'] == 'user':
+            st.text_area("", value=chat['message'], height=40, key=chat['message'][:10]+"_u", disabled=True, style={"text-align": "right"})
+        else:
+            st.text_area("", value=chat['message'], height=40, key=chat['message'][:10]+"_b", disabled=True)
+
+# Page Configuration
+st.set_page_config(page_title='BitChat', layout='wide', initial_sidebar_state='auto')
+
+hide_ui_style = """<style> #MainMenu {visibility: hidden;} footer {visibility: hidden;} </style>"""
+st.markdown(hide_ui_style, unsafe_allow_html=True)
+
+st.title("Welcome to BitChat - UW Cuisine Bot")
+
+# Sidebar for user preferences and contact
+with st.sidebar:
+    st.header("Preferences")
+    st.checkbox('Send SMS Notifications', key='sms')
+    st.checkbox('Send Email Updates', key='email')
+    st.markdown("---")
+    st.markdown("#### Contact Us")
+    st.markdown("<a href='mailto:support@bitchat.com'>support@bitchat.com</a>", unsafe_allow_html=True)
+
+# Displaying the chat
+display_chat()
+
+# User input
+user_input = st.text_input("Ask me about the best cuisine choices in the University District:", "")
+
+if user_input:
+    add_message('user', user_input)
+    # Simulate bot response
+    response = "Here's what I found for you!"  # Placeholder for actual logic to generate a response
+    add_message('bot', response)
+
+    # Clear input box after submission
+    st.experimental_rerun()
